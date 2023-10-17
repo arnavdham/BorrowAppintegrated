@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:postmandummyrepo/HamMenu/hamburger_menu.dart';
+import 'package:postmandummyrepo/HamMenu/hamburger_menu_viewmodel.dart';
+import '../Lend/lend_request_card.dart';
 class BorrowScreen extends StatefulWidget {
   const BorrowScreen({Key? key}) : super(key: key);
 
@@ -10,11 +13,12 @@ class _BorrowScreenState extends State<BorrowScreen> {
   @override
   Widget build(BuildContext context) {
     final user = FirebaseAuth.instance.currentUser!;
+    final SideBarViewModel viewModel = SideBarViewModel();
     return ChangeNotifierProvider(
       create: (context) => GoogleSignInProvider(),
       child: Builder(builder: (BuildContext context) {
         return Scaffold(
-          drawer: HamMenu(),
+          drawer: SideBar(viewModel: viewModel),
           appBar: AppBar(
             title: Text(
               "Borrow Requests",

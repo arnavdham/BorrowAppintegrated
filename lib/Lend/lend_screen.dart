@@ -1,4 +1,9 @@
-import 'package:flutter/material.dart';;
+import 'package:flutter/material.dart';
+import 'package:postmandummyrepo/HamMenu/hamburger_menu.dart';
+import 'package:postmandummyrepo/HamMenu/hamburger_menu_viewmodel.dart';
+
+import '../Borrow/borrow_request_card.dart';
+
 class LendScreen extends StatefulWidget {
   const LendScreen({Key? key}) : super(key: key);
 
@@ -10,11 +15,12 @@ class _LendScreenState extends State<LendScreen> {
   @override
   Widget build(BuildContext context) {
     final user = FirebaseAuth.instance.currentUser!;
+    final SideBarViewModel viewModel = SideBarViewModel();
     return ChangeNotifierProvider(
       create: (context) => GoogleSignInProvider(),
       child: Builder(builder: (BuildContext context) {
         return Scaffold(
-          drawer: HamMenu(),
+          drawer: SideBar(viewModel: viewModel),
           appBar: AppBar(
             backgroundColor: const Color(0xFF144272),
             title:  Text("Lend Requests",style: GoogleFonts.poppins(fontWeight: FontWeight.w400, color: Colors.white),),
