@@ -1,4 +1,4 @@
-import 'package:borrow/screens/fpass.dart';
+import 'package:borrow/screens/login_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -8,9 +8,9 @@ import 'package:http/http.dart' as http;
 import 'register_screen.dart';
 import 'dart:convert';
 
-class LoginScreen extends StatelessWidget {
-  TextEditingController _usernameController = TextEditingController();
-  TextEditingController _passwordController = TextEditingController();
+class fpassScreen extends StatelessWidget {
+  TextEditingController _oldpasswordController = TextEditingController();
+  TextEditingController _newpasswordController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -52,7 +52,7 @@ class LoginScreen extends StatelessWidget {
                     height: 150.0,
                   ),
                   const Text(
-                    'Log in to your Account',
+                    'Change your Password',
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 25.0,
@@ -63,9 +63,9 @@ class LoginScreen extends StatelessWidget {
                   ),
                   //two new text field
                   TextField(
-                    controller: _usernameController,
+                    controller: _oldpasswordController,
                     decoration: InputDecoration(
-                        labelText: 'Username',
+                        labelText: 'Old password',
                         labelStyle:
                         TextStyle(color: Colors.white, fontSize: 15.0),
                         filled: true,
@@ -78,9 +78,9 @@ class LoginScreen extends StatelessWidget {
                     style: TextStyle(color: Colors.white),
                   ),
                   TextField(
-                    controller: _passwordController,
+                    controller: _newpasswordController,
                     decoration: InputDecoration(
-                        labelText: 'Password',
+                        labelText: 'New Password',
                         labelStyle:
                         TextStyle(color: Colors.white, fontSize: 15.0),
                         filled: true,
@@ -94,11 +94,11 @@ class LoginScreen extends StatelessWidget {
                   ),
                   ElevatedButton(
                     onPressed: () {
-                      Login loginData=Login(
-                        username: _usernameController.text,
-                        password: _passwordController.text
+                      Changepass changepass=Changepass(
+                          oldPassword: _oldpasswordController.text,
+                          newPassword: _newpasswordController.text
                       );
-                      sendLoginData(loginData);
+                      changepassfinal(changepass);
                     },
                     // onPressed: () async {
                     //   final user = await signInWithGoogle();
@@ -112,7 +112,7 @@ class LoginScreen extends StatelessWidget {
                     //     );
                     //   } else {}
                     // },
-                    child: Text('Login'),
+                    child: Text('Change'),
                     //child: Text('Sign in with Google'),
                   ),
                   TextButton(
@@ -130,10 +130,10 @@ class LoginScreen extends StatelessWidget {
                       Navigator.push(
                         context,
                         MaterialPageRoute(builder: (context) =>
-                            fpassScreen()),
+                            LoginScreen()),
                       );
                     },
-                    child: Text("Forgot Password"),
+                    child: Text("Login"),
                   )
                 ],
               ),
@@ -146,93 +146,33 @@ class LoginScreen extends StatelessWidget {
 }
 
 
-
-  // Future<User?> signInWithGoogle() async {
-  //   try {
-  //     final GoogleSignInAccount? gUser = await GoogleSignIn().signIn();
-  //     if (gUser == null) {
-  //       // User canceled the sign-in
-  //       return null;
-  //     }
-  //
-  //     final GoogleSignInAuthentication gAuth = await gUser.authentication;
-  //     final AuthCredential credential = GoogleAuthProvider.credential(
-  //       accessToken: gAuth.accessToken,
-  //       idToken: gAuth.idToken,
-  //     );
-  //
-  //     final UserCredential userCredential =
-  //         await FirebaseAuth.instance.signInWithCredential(credential);
-  //
-  //     User? user = userCredential.user;
-  //     if (user != null) {
-  //       await addUserToFirestore(user);
-  //     }
-  //
-  //     return user;
-  //   } catch (error) {
-  //     // Handle and log the error
-  //     print("Error signing in with Google: $error");
-  //     return null;
-  //   }
-  // }
-  //
-  // Future<void> addUserToFirestore(User user) async {
-  //   try {
-  //     String uid = user.uid;
-  //     String email = user.email ?? "";
-  //     FirebaseFirestore firestore = FirebaseFirestore.instance;
-  //
-  //     await firestore.collection('users').doc(uid).set({
-  //       'email': email,
-  //       'uid': uid,
-  //     });
-  //   } catch (error) {
-  //     print("Error adding user to Firestore: $error");
-  //   }
-  // }
-
-//   void login(String username, String password) async {
-//     var request = http.Request('POST', Uri.parse('https://13.232.61.146/login'));
-//     request.body = '''{"username":"$username","password":"$password"}''';
-//
-//     http.StreamedResponse response = await request.send();
-//
-//     if (response.statusCode == 200) {
-//       print(await response.stream.bytesToString());
-//     } else {
-//       print(request.body);
-//       print(response.reasonPhrase);
-//     }
-//   }
-// }
 //model
-class Login {
-  String? username;
-  String? password;
+class Changepass {
+  String? oldPassword;
+  String? newPassword;
 
-  Login({this.username, this.password});
+  Changepass({this.oldPassword, this.newPassword});
 
-  Login.fromJson(Map<String, dynamic> json) {
-    username = json['username'];
-    password = json['password'];
+  Changepass.fromJson(Map<String, dynamic> json) {
+    oldPassword = json['old_password'];
+    newPassword = json['new_password'];
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['username'] = this.username;
-    data['password'] = this.password;
+    data['old_password'] = this.oldPassword;
+    data['new_password'] = this.newPassword;
     return data;
   }
 }
 
 //view model
-Future<void> sendLoginData(Login loginData) async {
+Future<void> changepassfinal(Changepass changepass) async {
   // Define the URL where you want to send the POST request
-  String apiUrl = 'http://13.232.61.146/login'; // Replace with your API endpoint
+  String apiUrl = 'http://13.232.61.146/loggedin/resetpass'; // Replace with your API endpoint
 
   // Convert the login object to JSON
-  Map<String, dynamic> jsonData = loginData.toJson();
+  Map<String, dynamic> jsonData = changepass.toJson();
   String jsonBody = jsonEncode(jsonData);
 
   try {
