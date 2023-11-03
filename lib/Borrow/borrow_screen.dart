@@ -1,7 +1,10 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:postmandummyrepo/Borrow/borrow_view_model.dart';
 import 'package:postmandummyrepo/HamMenu/hamburger_menu.dart';
 import 'package:postmandummyrepo/HamMenu/hamburger_menu_viewmodel.dart';
 import '../Lend/lend_request_card.dart';
+import 'borrow_request_card.dart';
 class BorrowScreen extends StatefulWidget {
   const BorrowScreen({Key? key}) : super(key: key);
 
@@ -49,40 +52,33 @@ class _BorrowScreenState extends State<BorrowScreen> {
           ),
           body: Container(
             color: const Color(0xFF0A2647),
-            child: StreamBuilder(
-              stream: FirebaseFirestore.instance
-                  .collection('Lend_Requests')
-                  .snapshots(),
-              builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
+            child: FutureBuilder<List<Map<String, dynamic>>>(
+              future: fetchBorrowObjectList(),
+              builder: (BuildContext context, AsyncSnapshot<List<Map<String, dynamic>>> snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const CircularProgressIndicator();
                 }
                 if (snapshot.hasError) {
                   return Text('Error: ${snapshot.error}');
                 }
-                if (!snapshot.hasData || snapshot.data.docs.isEmpty) {
-                  return const Text('No Borrow Requests available.');
+                if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                  return const Text('No Lend Requests available.');
                 }
 
-                final borrowRequests = snapshot.data.docs.map((doc) {
-                  return LendRequestCard(
-                    imageUrl: doc['imageUrl'],
-                    username: doc['username'],
-                    title: doc['title'],
-                    body: doc['body'],
-                    profilePicUrl: doc['profilePicUrl'],
-                    rentOrSell: doc['rentOrSell'],
-                    userId: doc['userId'],
-                  );
-                }).toList();
                 return ListView.builder(
-                  itemCount: borrowRequests.length,
+                  itemCount: snapshot.data?.length,
                   itemBuilder: (BuildContext context, int index) {
-                    return borrowRequests[index];
+                    final item = snapshot.data[index];
+                    return BorrowRequestCard(
+                      imagePath: item['Image_Path'],
+                      title: item['Title'],
+                      description: item['Description'],
+                      isAvailable: item['Is_Available'],
+                    );
                   },
                 );
               },
-            ),
+            )
           ),
           bottomNavigationBar: BottomNavBar(
               currentIndex: 2,

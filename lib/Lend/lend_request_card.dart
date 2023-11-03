@@ -6,23 +6,23 @@ import 'package:google_fonts/google_fonts.dart';
 import '../Chat System/chat_page.dart';
 
 class LendRequestCard extends StatefulWidget {
-  final String imageUrl;
-  final String username;
+  final String imagePath;
+  final String creatorName;
   final String title;
-  final String body;
-  final String profilePicUrl;
-  final String rentOrSell;
-  final String userId;
+  final String description;
+  final double price;
+  final double days;
+  final String createdAt;
 
   LendRequestCard({
     Key? key,
-    required this.imageUrl,
-    required this.username,
+    required this.imagePath,
+    required this.creatorName,
     required this.title,
-    required this.body,
-    required this.profilePicUrl,
-    required this.rentOrSell,
-    required this.userId,
+    required this.description,
+    required this.price,
+    required this.days,
+    required this.createdAt,
   }) : super(key: key);
 
   @override
@@ -34,46 +34,46 @@ class _LendRequestCardState extends State<LendRequestCard> {
   bool showFullText = false;
   final user = FirebaseAuth.instance.currentUser!;
 
-  void _handleSendButtonPress() async {
-    String currentUserId = user.uid;
-    String receiverUserId = widget.userId;
+  // void _handleSendButtonPress() async {
+  //   String currentUserId = user.uid;
+  //   String receiverUserId = widget.userId;
+  //
+  //   //bool roomExists = await checkIfRoomExists(currentUserId, receiverUserId);
+  //
+  //   if (!roomExists && (currentUserId != receiverUserId)) {
+  //     await createRoom(currentUserId, receiverUserId);
+  //   }
+  //
+  //   // Navigate to the chat screen
+  //   if (currentUserId != receiverUserId) {
+  //     Navigator.push(
+  //       context,
+  //       MaterialPageRoute(
+  //         builder: (context) => ChatPage(
+  //           senderUserId: currentUserId,
+  //           receiverUserId: receiverUserId,
+  //         ),
+  //       ),
+  //     );
+  //
+  //   }
+  // }
 
-    bool roomExists = await checkIfRoomExists(currentUserId, receiverUserId);
-
-    if (!roomExists && (currentUserId != receiverUserId)) {
-      await createRoom(currentUserId, receiverUserId);
-    }
-
-    // Navigate to the chat screen
-    if (currentUserId != receiverUserId) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => ChatPage(
-            senderUserId: currentUserId,
-            receiverUserId: receiverUserId,
-          ),
-        ),
-      );
-
-    }
-  }
-
-  Future<bool> checkIfRoomExists(String userId1, String userId2) async {
-    CollectionReference rooms = FirebaseFirestore.instance.collection('Rooms');
-
-    QuerySnapshot<Map<String, dynamic>> querySnapshot1 = await rooms
-        .where('user1', isEqualTo: userId1)
-        .where('user2', isEqualTo: userId2)
-        .get() as QuerySnapshot<Map<String, dynamic>>;
-
-    QuerySnapshot<Map<String, dynamic>> querySnapshot2 = await rooms
-        .where('user1', isEqualTo: userId2)
-        .where('user2', isEqualTo: userId1)
-        .get() as QuerySnapshot<Map<String, dynamic>>;
-
-    return querySnapshot1.docs.isNotEmpty || querySnapshot2.docs.isNotEmpty;
-  }
+  // Future<bool> checkIfRoomExists(String userId1, String userId2) async {
+  //   CollectionReference rooms = FirebaseFirestore.instance.collection('Rooms');
+  //
+  //   QuerySnapshot<Map<String, dynamic>> querySnapshot1 = await rooms
+  //       .where('user1', isEqualTo: userId1)
+  //       .where('user2', isEqualTo: userId2)
+  //       .get() as QuerySnapshot<Map<String, dynamic>>;
+  //
+  //   QuerySnapshot<Map<String, dynamic>> querySnapshot2 = await rooms
+  //       .where('user1', isEqualTo: userId2)
+  //       .where('user2', isEqualTo: userId1)
+  //       .get() as QuerySnapshot<Map<String, dynamic>>;
+  //
+  //   return querySnapshot1.docs.isNotEmpty || querySnapshot2.docs.isNotEmpty;
+  // }
 
   Future<void> createRoom(String currentUserId, String receiverUserId) async {
     try {
@@ -107,12 +107,12 @@ class _LendRequestCardState extends State<LendRequestCard> {
                 padding: const EdgeInsets.all(7.0),
                 child: CircleAvatar(
                   radius: 15,
-                  backgroundImage: NetworkImage(widget.profilePicUrl),
+                  backgroundImage: NetworkImage(''),
                 ),
               ),
               const SizedBox(width: 8.0),
               Text(
-                widget.username,
+                widget.creatorName,
                 style: GoogleFonts.poppins(color: Colors.white),
               ),
             ],
@@ -126,7 +126,7 @@ class _LendRequestCardState extends State<LendRequestCard> {
                 Expanded(
                   flex: 3, // Occupy 37.5% of the width
                   child: Image.network(
-                    widget.imageUrl,
+                    widget.imagePath,
                     fit: BoxFit.cover,
                     height: 150,
                     width: double.infinity,
@@ -150,18 +150,18 @@ class _LendRequestCardState extends State<LendRequestCard> {
                                 ),
                               ),
                             ),
-                            Text(
-                              '<' + widget.rentOrSell,
-                              style: GoogleFonts.poppins(
-                                color: Color(0xFF15FE64),
-                                fontWeight: FontWeight.w400,
-                              ),
-                            ),
+                            // Text(
+                            //   '<' + widget.rentOrSell,
+                            //   style: GoogleFonts.poppins(
+                            //     color: Color(0xFF15FE64),
+                            //     fontWeight: FontWeight.w400,
+                            //   ),
+                            // ),
                           ],
                         ),
                         const SizedBox(height: 8.0),
                         Text(
-                          widget.body,
+                          widget.description,
                           maxLines: showFullText ? null : 2,
                           overflow: showFullText ? null : TextOverflow.ellipsis,
                           style: GoogleFonts.poppins(
@@ -211,7 +211,7 @@ class _LendRequestCardState extends State<LendRequestCard> {
                   color: Colors.white,
                 ),
                 onPressed: () {
-                  _handleSendButtonPress();
+                  //_handleSendButtonPress();
                 },
               ),
             ],

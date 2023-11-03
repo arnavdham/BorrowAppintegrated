@@ -1,48 +1,15 @@
-Future<void> postBorrowRequest(
-    {required String title,
-      required String body,
-      required String imageUrl,
-      required String username,
-      required String profilePicUrl,
-      required String userId}) async {
-  final user = FirebaseAuth.instance.currentUser;
-  if (user != null) {
-    try {
-      final borrowRequestData = {
-        'title': title,
-        'body': body,
-        'imageUrl': imageUrl,
-        'username': username,
-        'profilePicUrl': profilePicUrl,
-        'userId': userId,
-      };
 
-      await FirebaseFirestore.instance
-          .collection('Borrow_Requests')
-          .add(borrowRequestData);
-      print('borrow request successful');
-    } catch (e) {
-      print('Error posting borrow request: $e');
-    }
-  }
-}
-Future<int> getLendRequestCount() async {
-  final user = FirebaseAuth.instance.currentUser;
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 
-  if (user == null) {
-    // User not authenticated
-    return 0;
-  }
+Future<List<Map<String, dynamic>>> fetchBorrowObjectList() async {
 
-  try {
-    QuerySnapshot lendRequests = await FirebaseFirestore.instance
-        .collection('Lend_Requests')
-        .where('userId', isEqualTo: user.uid)
-        .get();
+  final response = await http.get(Uri.parse('https://13.232.61.146/loggedin/BorrowObject/list'));
 
-    return lendRequests.size;
-  } catch (e) {
-    print('Error getting lend requests: $e');
-    return 0;
+  if (response.statusCode == 200) {
+    final List<dynamic> data = json.decode(response.body);
+    return data.cast<Map<String, dynamic>>();
+  } else {
+    throw Exception('Failed to load data');
   }
 }

@@ -1,20 +1,16 @@
-Future<int> getBorrowRequestCount() async {
-  final user = FirebaseAuth.instance.currentUser;
+import 'dart:convert';
 
-  if (user == null) {
-    // User not authenticated
-    return 0;
-  }
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:http/http.dart' as http;
+Future<List<Map<String, dynamic>>> fetchLendObjectList() async {
 
-  try {
-    QuerySnapshot borrowRequests = await FirebaseFirestore.instance
-        .collection('Borrow_Requests')
-        .where('userId', isEqualTo: user.uid)
-        .get();
+  final response = await http.get(Uri.parse('https://13.232.61.146/loggedin/lendObject/list'));
 
-    return borrowRequests.size;
-  } catch (e) {
-    print('Error getting borrow requests: $e');
-    return 0;
+  if (response.statusCode == 200) {
+    final List<dynamic> data = json.decode(response.body);
+    return data.cast<Map<String, dynamic>>();
+  } else {
+    throw Exception('Failed to load data');
   }
 }

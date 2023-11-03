@@ -1,21 +1,21 @@
 class LendRequest {
   final String id;
-  final String userId;
-  final String username;
-  final String profilePicUrl;
-  final String imageUrl;
+  final double days;
+  final String creatorName;
+  final double price;
+  final String imagePath;
   final String title;
-  final String body;
-  bool isSaved;
+  final String description;
+  final String createdAt;
 
   LendRequest({
-    required this.imageUrl,
+    required this.imagePath,
     required this.id,
-    required this.userId,
-    required this.username,
-    required this.profilePicUrl,
+    required this.days,
+    required this.creatorName,
+    required this.price,
     required this.title,
-    required this.body,
-    this.isSaved = false,
+    required this.description,
+    required this.createdAt,
   });
 }
